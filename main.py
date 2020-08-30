@@ -29,14 +29,21 @@ while a < 10 :
 def sum(a, b):
     return a + b    
 print(sum(a, 5))
+'''
 
+prog2 = '''
+for i in range(1,10):
+    print(i)
+
+b = 1
+print(b)
 '''
 # вызов конструктора класса Parser.
 parser = Parser()
 # вызов конструктора класса Analyzer.
 analyzer = Analyzer()
 # в переменной res хранится корень графа, описывающего структуру кода из переменной prog.
-res = parser.parse(prog)
+res = parser.parse(prog2)
 print(*res.tree, sep=os.linesep)
 
 # вызов метода analyze, который производит семантический анализ

@@ -70,7 +70,7 @@ class Parser:
 
         # Описание цикла for.
         for_statement_list = pp.Optional(simple_stmt + pp.ZeroOrMore(COMMA + simple_stmt)).setName('BlockStatement')
-        for_statement = mult_var | for_statement_list
+        for_statement = simple_var | for_statement_list
         for_test = expr | pp.Group(pp.empty)
         for_block = stmt | pp.Group(SEMICOLON).setName('BlockStatement')
 
@@ -175,6 +175,9 @@ class Parser:
 
         code = self.close_block(code)
 
+        if "for" and "in" in code:
+            code = self.replace_for(code)
+
         row, col = 0, 0
         for ch in code:
             if ch == '\n':
@@ -205,3 +208,19 @@ class Parser:
             code += lines[l] + "\n"
 
         return code
+
+    def replace_for(self, code:str):
+        codetemp = code[code.index(':')+1:len(code)]
+        range = code[code.index('(')+1:code.index(')')].split(',')
+        code.strip()
+        variables = code.split(' ')
+        variable = variables[1]
+        if(len(range) == 1):
+            for_loop = "for (var " + variable + "=0;" + variable + "<" + range[0]+";"+variable+"++):"
+            return for_loop + codetemp
+        if (len(range) == 2):
+            for_loop = "for (var " + variable + "="+range[0]+";" + variable + "<" + range[1] + ";" + variable + "++):"
+            return for_loop + codetemp
+        if (len(range) == 3):
+            for_loop = "for (var " + variable + "="+range[0]+";" + variable + "<" + range[1] + ";" + variable + "="+variable+"+"+range[2]+"):"
+            return for_loop + codetemp
