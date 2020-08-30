@@ -8,21 +8,26 @@ from src.VM.VirtualMachine import *
 prog = '''
 b = 1
 a = b + 2
-myprint(a)
+print(a) # comment
 
 str = "Hello " + "world"
-myprint(str)
+print(str)
 
 bool = a < b
-myprint(bool)
+print(bool)
 
 if a > b :
     a = 7
-myprint(a)
+print(a)
 
 while a < 10 :
     a++
-    myprint(a)
+    print(a)
+    
+def sum(a, b):
+    return a + b    
+print(sum(a, 5))
+
 
 '''
 # вызов конструктора класса Parser.

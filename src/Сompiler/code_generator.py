@@ -74,8 +74,6 @@ class CodeGenerator:
             self.__compile_if(node)
         elif node.__class__.__name__ in ["WhileNode"]:
             self.__compile_while(node)
-        elif node.__class__.__name__ in ["DoWhileNode"]:
-            self.__compile_dowhile(node)
         elif node.__class__.__name__ in ["ForNode"]:
             self.__compile_for(node)
 

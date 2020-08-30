@@ -20,13 +20,13 @@ class Parser:
         literal = (num | str_).setName('Literal')
         ident = ppc.identifier.setName('Ident')
         # Описание ключевых слов
-        VAR_KW, FUNC_KW, RETURN_KW = pp.Keyword('var'), pp.Keyword('function'), pp.Keyword('return')
+        VAR_KW, FUNC_KW, RETURN_KW = pp.Keyword('var'), pp.Keyword('def'), pp.Keyword('return')
         IF_KW, ELSE_KW = pp.Keyword('if'), pp.Keyword('else')
         FOR_KW, DO_KW, WHILE_KW = pp.Keyword('for'), pp.Keyword('do'), pp.Keyword('while')
         # Описание различных скобок, запятой и точки с запятой.
         L_PAR, R_PAR = pp.Literal('(').suppress(), pp.Literal(')').suppress()
         L_BRACKET, R_BRACKET = pp.Literal('{').suppress(), pp.Literal('}').suppress()
-        SEMICOLON, COMMA = pp.Literal(';').suppress(), pp.Literal(',').suppress()
+        SEMICOLON, COMMA, COLON = pp.Literal(';').suppress(), pp.Literal(',').suppress(), pp.Literal(':').suppress()
         # Описание операторов
         ASSIGN = pp.Literal('=')
         ADD, SUB, MUL, DIV, MOD, EXP = pp.Literal('+'), pp.Literal('-'), pp.Literal('*'), pp.Literal('/'), \
@@ -70,18 +70,18 @@ class Parser:
 
         # Описание цикла for.
         for_statement_list = pp.Optional(simple_stmt + pp.ZeroOrMore(COMMA + simple_stmt)).setName('BlockStatement')
-        for_statement = mult_var | for_statement_list
+        for_statement = ident + pp.Keyword("in").suppress() + call
         for_test = expr | pp.Group(pp.empty)
         for_block = stmt | pp.Group(SEMICOLON).setName('BlockStatement')
 
         # Описание циклов for, while, do while, условного оператора if.
         if_ = (IF_KW.suppress() + expr + stmt + pp.Optional(ELSE_KW.suppress() + stmt)).setName('If')
-        for_ = (FOR_KW.suppress() + L_PAR + for_statement + SEMICOLON + for_test + SEMICOLON +
+        for_ = (FOR_KW.suppress() + for_statement + SEMICOLON + for_test + SEMICOLON +
                 for_statement + R_PAR + for_block).setName('For')
         while_ = (WHILE_KW.suppress() + expr + stmt).setName('While')
         # Описание блока кода в { } и без них, аргументов функции, объявления функции и оператора return.
-        block = pp.ZeroOrMore(stmt + pp.ZeroOrMore(SEMICOLON)).setName('BlockStatement')
-        br_block = pp.Keyword(":").suppress() + block + R_BRACKET
+        block = pp.ZeroOrMore(stmt).setName('BlockStatement')
+        br_block = COLON + block + R_BRACKET
         args = ((expr + pp.ZeroOrMore(COMMA + expr)) | pp.Group(pp.empty)).setName("Args")
         func_decl = (FUNC_KW.suppress() + ident + L_PAR + args + R_PAR + br_block)\
             .setName('FuncDeclaration')

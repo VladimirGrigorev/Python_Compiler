@@ -1,9 +1,10 @@
 import math
 from random import random
+import builtins as b
 
 
-def myprint(to_print):
-    print(to_print)
+def print(to_print):
+    b.print(to_print)
 
 def sqrt(val):
     return math.sqrt(val)
