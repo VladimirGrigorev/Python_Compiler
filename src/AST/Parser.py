@@ -70,13 +70,13 @@ class Parser:
 
         # Описание цикла for.
         for_statement_list = pp.Optional(simple_stmt + pp.ZeroOrMore(COMMA + simple_stmt)).setName('BlockStatement')
-        for_statement = ident + pp.Keyword("in").suppress() + call
+        for_statement = mult_var | for_statement_list
         for_test = expr | pp.Group(pp.empty)
         for_block = stmt | pp.Group(SEMICOLON).setName('BlockStatement')
 
         # Описание циклов for, while, do while, условного оператора if.
         if_ = (IF_KW.suppress() + expr + stmt + pp.Optional(ELSE_KW.suppress() + stmt)).setName('If')
-        for_ = (FOR_KW.suppress() + for_statement + SEMICOLON + for_test + SEMICOLON +
+        for_ = (FOR_KW.suppress() + L_PAR + for_statement + SEMICOLON + for_test + SEMICOLON +
                 for_statement + R_PAR + for_block).setName('For')
         while_ = (WHILE_KW.suppress() + expr + stmt).setName('While')
         # Описание блока кода в { } и без них, аргументов функции, объявления функции и оператора return.
@@ -192,10 +192,12 @@ class Parser:
     def close_block(self, code: str):
         lines = code.split('\n')
         for l in range(0, len(lines) - 1):
-            i1 = lines[l].find("    ")
-            i2 = lines[l + 1].find("    ")
-            if (i2 == -1) & (i1 != -1):
-                lines[l] = lines[l] + " }"
+            i1 = len(lines[l]) - len(lines[l].lstrip())
+            i2 = len(lines[l + 1]) - len(lines[l + 1].lstrip())
+            a = i1 - i2
+            if ((a % 4 == 0) & (a > 0)):
+                for k in range(0, a//4):
+                    lines[l] = lines[l] + " }"
 
         code = ""
 

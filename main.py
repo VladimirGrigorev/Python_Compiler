@@ -23,11 +23,12 @@ print(a)
 while a < 10 :
     a++
     print(a)
+    if a == 9 :
+        print("nine")
     
 def sum(a, b):
     return a + b    
 print(sum(a, 5))
-
 
 '''
 # вызов конструктора класса Parser.
