@@ -4,7 +4,7 @@ from src.AST.Operators import Operators
 import pyparsing as pp
 from pyparsing import pyparsing_common as ppc
 from src.AST.Nodes import *
-
+import re
 
 class Parser:
     """ Класс, который используется для парсинга кода. """
@@ -70,7 +70,7 @@ class Parser:
 
         # Описание цикла for.
         for_statement_list = pp.Optional(simple_stmt + pp.ZeroOrMore(COMMA + simple_stmt)).setName('BlockStatement')
-        for_statement = mult_var | for_statement_list
+        for_statement = simple_var | for_statement_list
         for_test = expr | pp.Group(pp.empty)
         for_block = stmt | pp.Group(SEMICOLON).setName('BlockStatement')
 
@@ -175,6 +175,11 @@ class Parser:
 
         code = self.close_block(code)
 
+        if "for" and "in" in code:
+            code = self.replace_for(code)
+        #
+        # print(code)
+
         row, col = 0, 0
         for ch in code:
             if ch == '\n':
@@ -185,7 +190,6 @@ class Parser:
             else:
                 col += 1
             self._locs.append((row, col))
-
         return self.grammar.parseString(str(code))[0]
 
     # Закрытие блоков (символ конца блока - })
@@ -198,10 +202,38 @@ class Parser:
             if ((a % 4 == 0) & (a > 0)):
                 for k in range(0, a//4):
                     lines[l] = lines[l] + " }"
-
         code = ""
-
         for l in range(0, len(lines)):
             code += lines[l] + "\n"
-
         return code
+
+    def replace_for(self, code:str):
+        lines = code.split('\n')
+        regexp = re.compile(r'for\s+\w\s+in')
+        for l in lines:
+            # if 'for' and 'in' in l:
+            if regexp.search(l):
+                codetemp = l[l.index(':') + 1:len(l)]
+                range = l[l.index('(') + 1:l.index(')')].split(',')
+                l.strip()
+                variables = l.split(' ')
+                variable = variables[1]
+                if (len(range) == 1):
+                    for_loop = "for (var " + variable + "=0;" + variable + "<" + range[0] + ";" + variable + "++):"
+                    lines[lines.index(l)] = for_loop + codetemp
+                if (len(range) == 2):
+                    for_loop = "for (var " + variable + "=" + range[0] + ";" + variable + "<" + range[
+                        1] + ";" + variable + "++):"
+                    lines[lines.index(l)] = for_loop + codetemp
+                if (len(range) == 3):
+                    for_loop = "for (var " + variable + "=" + range[0] + ";" + variable + "<" + range[
+                        1] + ";" + variable + "=" + variable + "+" + range[2] + "):"
+                    lines[lines.index(l)] = for_loop + codetemp
+        code = ""
+        for l in lines:
+            code += l + "\n"
+        return code
+
+
+
+
