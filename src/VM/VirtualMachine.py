@@ -49,7 +49,7 @@ class VirtualMachine:
             LOAD: self.load,
             STORE: self.store,
             CALL: self.call,
-            CBLTN: self.call_builtin
+            FUNC: self.call_builtin
         }
 
         if instruction.cmd in opcode:

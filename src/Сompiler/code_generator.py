@@ -64,7 +64,7 @@ class CodeGenerator:
             for param in node.args:
                 self.__generate_code(param)
             if node.ident.name in builtin_funcs:
-                self.__add_line(CodeLine('CBLTN', node.ident.name))
+                self.__add_line(CodeLine('FUNC', node.ident.name))
             else:
                 self.__add_line(CodeLine('CALL', self.__funcs[node.ident.name]))
         elif node.__class__.__name__ in ["BlockStatementNode", "VarDeclarationNode"]:

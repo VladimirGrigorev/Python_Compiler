@@ -155,7 +155,7 @@ class VarDeclarationNode(TreeNode):
 class BlockStatementNode(TreeNode):
     """
     Класс, содержащий в себе переменную nodes, описывающую множество всех узлов в этом блоке.
-    В нашей реализации вся программа является блоком. Функции, if, for, while и do while также содержат в себе блоки.
+    В нашей реализации вся программа является блоком. Функции, if, for, while также содержат в себе блоки.
     """
     def __init__(self, row, col, *nodes: TreeNode):
         super().__init__(row, col)
@@ -199,7 +199,7 @@ class FuncDeclarationNode(TreeNode):
         return self.params, self.block
 
     def __str__(self) -> str:
-        return 'function ' + str(self.ident)
+        return 'def ' + str(self.ident)
 
 
 class IfNode(TreeNode):
