@@ -177,8 +177,6 @@ class Parser:
 
         if "for" and "in" in code:
             code = self.replace_for(code)
-        #
-        # print(code)
 
         row, col = 0, 0
         for ch in code:
@@ -196,11 +194,11 @@ class Parser:
     def close_block(self, code: str):
         lines = code.split('\n')
         for l in range(0, len(lines) - 1):
-            i1 = len(lines[l]) - len(lines[l].lstrip())
-            i2 = len(lines[l + 1]) - len(lines[l + 1].lstrip())
-            a = i1 - i2
-            if ((a % 4 == 0) & (a > 0)):
-                for k in range(0, a//4):
+            indent1 = len(lines[l]) - len(lines[l].lstrip())
+            indent2 = len(lines[l + 1]) - len(lines[l + 1].lstrip())
+            difference = indent1 - indent2
+            if ((difference % 4 == 0) & (difference > 0)):
+                for k in range(0, difference//4):
                     lines[l] = lines[l] + " }"
         code = ""
         for l in range(0, len(lines)):
