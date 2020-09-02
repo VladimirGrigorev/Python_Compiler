@@ -92,7 +92,6 @@ class Parser:
                 for_ |
                 while_ |
                 br_block |
-                mult_var |
                 simple_stmt |
                 func_decl |
                 return_
