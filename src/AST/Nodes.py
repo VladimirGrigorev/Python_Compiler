@@ -199,7 +199,7 @@ class FuncDeclarationNode(TreeNode):
         return self.params, self.block
 
     def __str__(self) -> str:
-        return 'function ' + str(self.ident)
+        return 'def ' + str(self.ident)
 
 
 class IfNode(TreeNode):

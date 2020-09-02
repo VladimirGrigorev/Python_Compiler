@@ -74,12 +74,12 @@ class Parser:
         for_test = expr | pp.Group(pp.empty)
         for_block = stmt | pp.Group(SEMICOLON).setName('BlockStatement')
 
-        # Описание циклов for, while, do while, условного оператора if.
+        # Описание циклов for, while, условного оператора if.
         if_ = (IF_KW.suppress() + expr + stmt + pp.Optional(ELSE_KW.suppress() + stmt)).setName('If')
         for_ = (FOR_KW.suppress() + L_PAR + for_statement + SEMICOLON + for_test + SEMICOLON +
                 for_statement + R_PAR + for_block).setName('For')
         while_ = (WHILE_KW.suppress() + expr + stmt).setName('While')
-        # Описание блока кода в { } и без них, аргументов функции, объявления функции и оператора return.
+        # Описание блока кода, аргументов функции, объявления функции и оператора return.
         block = pp.ZeroOrMore(stmt).setName('BlockStatement')
         br_block = COLON + block + R_BRACKET
         args = ((expr + pp.ZeroOrMore(COMMA + expr)) | pp.Group(pp.empty)).setName("Args")
@@ -189,8 +189,9 @@ class Parser:
             self._locs.append((row, col))
         return self.grammar.parseString(str(code))[0]
 
-    # Закрытие блоков (символ конца блока - })
     def close_block(self, code: str):
+        """ Метод закрытия блоков (символ конца блока - }). """
+
         lines = code.split('\n')
         for l in range(0, len(lines) - 1):
             indent1 = len(lines[l]) - len(lines[l].lstrip())
@@ -205,10 +206,10 @@ class Parser:
         return code
 
     def replace_for(self, code:str):
+        """ Метод преобразования цикла for в Python в более удобный вариант. """
         lines = code.split('\n')
         regexp = re.compile(r'for\s+\w\s+in')
         for l in lines:
-            # if 'for' and 'in' in l:
             if regexp.search(l):
                 codetemp = l[l.index(':') + 1:len(l)]
                 range = l[l.index('(') + 1:l.index(')')].split(',')
